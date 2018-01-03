@@ -90,9 +90,9 @@
 
   - name: "Download HarmonicIO files from git"
     git:
-      repo: https://github.com/beirbear/HarmonicIO.git
+      repo: https://github.com/benblamey/HarmonicIO
       dest: /home/ubuntu/HarmonicIO
-      version: CI_v0_r0
+      version: master
       force: yes
 
   - name: "Setup worker IPs and ports"
@@ -106,7 +106,7 @@
               "node_data_port_range": [9000, 9010], 
               "std_idle_time": 5 }
 
-      dest: /home/ubuntu/HarmonicIO/worker/configuration.json
+      dest: /home/ubuntu/HarmonicIO/harmonicIO/worker/configuration.json
     become: yes
     with_items:
       - "{{ groups['master'] }}"
@@ -120,7 +120,7 @@
               "node_data_port_range": [8090,8099],
               "std_idle_time": 5 }
 
-      dest: /home/ubuntu/HarmonicIO/master/configuration.json
+      dest: /home/ubuntu/HarmonicIO/harmonicIO/master/configuration.json
     become: yes
     with_items:
       - "{{ groups['master'] }}"
@@ -143,9 +143,9 @@
 
   - name: "Download HarmonicPE files from git"
     git:
-      repo: https://github.com/beirbear/HarmonicPE.git
+      repo: https://github.com/benblamey/HarmonicPE
       dest: /home/ubuntu/HarmonicPE
-      version: CI_v0_r0
+      version: master
 
 
   # - name: "Run Worker"
