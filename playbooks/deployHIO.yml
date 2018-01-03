@@ -37,6 +37,8 @@
     command: python3.5 /home/ubuntu/ez_setup.py
     become: yes
 
+#TODO: remove - colors no longer needed in refactored version
+
   - name: "Get colors"
     git:
       repo: https://github.com/verigak/colors.git
@@ -47,6 +49,8 @@
     args:
       chdir: /home/ubuntu/colors/
     become: yes
+
+# TODO: instead of installing falcon here run setup.py to install HIO python deps
 
   - name: "Get falcon"
     git:
@@ -77,6 +81,7 @@
 
   - service: name=docker state=restarted
 
+# TODO: instead of installing docker-py here run setup.py to install HIO python deps
   - name: "Get docker-py"
     git:
       repo: https://github.com/docker/docker-py.git
