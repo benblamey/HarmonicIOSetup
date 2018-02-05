@@ -17,10 +17,6 @@
   
   tasks:
 
-#  - name: "add repository"
-#    apt_repository:
-#      repo: ppa:fkrull/deadsnakes
-
   - name: "Install python 3 and update repositories"
     become: yes
     apt:
@@ -32,41 +28,6 @@
     apt:
       name: python3-pip
       update_cache: yes
-
-#  - name: "wget file"
-#    get_url:
-#      url: https://bootstrap.pypa.io/ez_setup.py
-#      dest: /home/ubuntu/
-#
-#  - name: "install ez_setup"
-#    command: python3.5 /home/ubuntu/ez_setup.py
-#    become: yes
-
-##TODO: remove - colors no longer needed in refactored version
-#
-#  - name: "Get colors"
-#    git:
-#      repo: https://github.com/verigak/colors.git
-#      dest: /home/ubuntu/colors
-#
-#  - name: "Install colors"
-#    command: python3.5 setup.py install
-#    args:
-#      chdir: /home/ubuntu/colors/
-#    become: yes
-
-## TODO: instead of installing falcon here run setup.py to install HIO python deps
-#
-#  - name: "Get falcon"
-#    git:
-#      repo: https://github.com/falconry/falcon.git
-#      dest: /home/ubuntu/falcon
-#
-#  - name: "Install falcon"
-#    command: python3.5 setup.py install
-#    args:
-#      chdir: /home/ubuntu/falcon/
-#    become: yes
 
 - hosts: workers
 
@@ -98,21 +59,6 @@
       name: docker
       state: restarted
 
-## TODO: instead of installing docker-py here run setup.py to install HIO python deps
-#  - name: "Get docker-py"
-#    git:
-#      repo: https://github.com/docker/docker-py.git
-#      dest: /home/ubuntu/docker-py
-
-
-
-
-#  - name: "Install docker-py"
-#    command: python3.5 setup.py install
-#    args:
-#      chdir: /home/ubuntu/docker-py/
-#    become: yes
-
 - hosts: master:workers
 
   tasks:
@@ -130,68 +76,32 @@
       chdir: /home/ubuntu/HarmonicIO
     become: yes
 
-#  - name: "Setup worker IPs and ports"
-#    copy:
-#      content: |
-#              { "node_name": "PE Worker",
-#              "node_port": 8888,
-#              "node_addr": "{{ ansible_default_ipv4.address }}",
-#              "master_addr": "{{ hostvars[item]['ansible_default_ipv4']['address'] }}",
-#              "master_port": 8080,
-#              "node_data_port_range": [9000, 9010],
-#              "std_idle_time": 5 }
-#
-#      dest: /home/ubuntu/HarmonicIO/harmonicIO/worker/configuration.json
-#    become: yes
-#    with_items:
-#      - "{{ groups['master'] }}"
+  - name: "Setup worker IPs and ports"
+    copy:
+      content: |
+              { "node_name": "PE Worker",
+              "node_port": 8888,
+              "node_addr": "{{ ansible_default_ipv4.address }}",
+              "master_addr": "{{ hostvars[item]['ansible_default_ipv4']['address'] }}",
+              "master_port": 8080,
+              "node_data_port_range": [9000, 9010],
+              "std_idle_time": 5 }
 
-#  - name: "Setup master IPs and ports"
-#    copy:
-#      content: |
-#              { "node_name": "PE Master",
-#              "master_addr": "{{ hostvars[item]['ansible_default_ipv4']['address'] }}",
-#              "node_port": 8080,
-#              "node_data_port_range": [8090,8099],
-#              "std_idle_time": 5 }
-#
-#      dest: /home/ubuntu/HarmonicIO/harmonicIO/master/configuration.json
-#    become: yes
-#    with_items:
-#      - "{{ groups['master'] }}"
- 
-# - hosts: master
-#
-#   tasks:
+      dest: /home/ubuntu/HarmonicIO/harmonicIO/worker/configuration.json
+    become: yes
+    with_items:
+      - "{{ groups['master'] }}"
 
-#   - name: "Run Master"
-#     command: screen -S H-Master -dm ./runMaster.sh
-#     args:
-#       chdir: /home/ubuntu/HarmonicIO/
-#     become_user: ubuntu
+  - name: "Setup master IPs and ports"
+    copy:
+      content: |
+              { "node_name": "PE Master",
+              "master_addr": "{{ hostvars[item]['ansible_default_ipv4']['address'] }}",
+              "node_port": 8080,
+              "node_data_port_range": [8090,8099],
+              "std_idle_time": 5 }
 
-
-
-#- hosts: workers
-#
-#  tasks:
-##
-##  - name: "Download HarmonicPE files from git"
-##    git:
-##      repo: https://github.com/HASTE-Project/HarmonicPE
-##      dest: /home/ubuntu/HarmonicPE
-##      version: master
-#
-#
-#
-#
-#   - name: "Run Worker"
-#     # -S start
-#     command: screen -S H-Worker -dm ./runWorker.sh
-#     args:
-#       chdir: /home/ubuntu/HarmonicIO/
-#     become: yes
-
-
-
-
+      dest: /home/ubuntu/HarmonicIO/harmonicIO/master/configuration.json
+    become: yes
+    with_items:
+      - "{{ groups['master'] }}"
